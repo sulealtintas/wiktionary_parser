@@ -1,4 +1,6 @@
 defmodule WiktionaryParser.Parser do
+  @moduledoc false
+
   require Floki
 
   @wiktionary_url "https://en.wiktionary.org/wiki/"

@@ -1,4 +1,6 @@
 defmodule WiktionaryParser.NounParser do
+  @moduledoc false
+
   import WiktionaryParser.Parser
   require Floki
 
