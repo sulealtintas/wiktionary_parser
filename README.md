@@ -10,12 +10,13 @@ Provides functions for parsing Russian language entries from Wiktionary.
 
 ## Usage
 To parse a word from a Russian Wiktionary entry, use the `WiktionaryParser.parse!/2` function,
-providing the word as a string and the part of speech as an atom (currently only supporting `:verb`
-and `:noun`):
+providing the dictionary form of the word as a string and the part of speech as an atom (currently
+only supporting `:verb` and `:noun`):
 
 ```elixir
 iex> WiktionaryParser.parse!("смотреть", :verb)
 %Verb{
+  translation: "to look",
   infinitive: "смотре́ть",
   aspect: "imperfective",
   present_first_singular: "смотрю́",
@@ -46,6 +47,8 @@ iex> WiktionaryParser.parse!("смотреть", :verb)
 
 iex> WiktionaryParser.parse!("кот", :noun)
 %Noun{
+  translation: "tomcat",
+  gender: "m",
   nominative_singular: "ко́т",
   genitive_singular: "кота́",
   dative_singular: "коту́",
@@ -58,6 +61,8 @@ iex> WiktionaryParser.parse!("кот", :noun)
   accusative_plural: "кото́в",
   instrumental_plural: "кота́ми",
   prepositional_plural: "кота́х",
+  partitive_singular: nil,
+  partitive_plural: nil,
   vocative_singular: nil,
   vocative_plural: nil
 }

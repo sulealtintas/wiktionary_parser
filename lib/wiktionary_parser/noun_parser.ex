@@ -4,37 +4,28 @@ defmodule WiktionaryParser.NounParser do
   import WiktionaryParser.Parser
   require Floki
 
-  defstruct nominative_singular: nil,
-            genitive_singular: nil,
-            dative_singular: nil,
-            accusative_singular: nil,
-            instrumental_singular: nil,
-            prepositional_singular: nil,
-            nominative_plural: nil,
-            genitive_plural: nil,
-            dative_plural: nil,
-            accusative_plural: nil,
-            instrumental_plural: nil,
-            prepositional_plural: nil
-
   @behaviour WiktionaryParser
 
   @impl WiktionaryParser
   def parse(word) do
-    with {:ok, html} <- get_html(word),
-         {:ok, document} <- Floki.parse_document(html),
-         {:ok, table} <- extract_table(document),
+    with {:ok, entry} <- get_entry(word),
+         {:ok, translation} <- extract_translation(entry),
+         {:ok, gender} <- extract_gender(entry),
+         {:ok, table} <- extract_table(entry),
          {:ok, rows} <- extract_table_rows(table),
          {:ok, cells} <- extract_table_cells(rows),
-         struct <- build_struct(cells) do
+         struct <- build_struct(cells, translation, gender) do
       {:ok, struct}
     else
       {:error, reason} -> {:error, reason}
     end
   end
 
-  defp build_struct(cells) do
-    add_declensions(%Noun{}, cells)
+  defp build_struct(cells, translation, gender) do
+    %Noun{}
+    |> add_field(:translation, translation)
+    |> add_field(:gender, gender)
+    |> add_declensions(cells)
   end
 
   defp add_declensions(struct, [_ | cells]) do
@@ -57,6 +48,8 @@ defmodule WiktionaryParser.NounParser do
   defp to_struct_key("accusative" <> _, :plural), do: :accusative_plural
   defp to_struct_key("instrumental" <> _, :plural), do: :instrumental_plural
   defp to_struct_key("prepositional" <> _, :plural), do: :prepositional_plural
+  defp to_struct_key("partitive" <> _, :singular), do: :partitive_singular
+  defp to_struct_key("partitive" <> _, :plural), do: :partitive_plural
   defp to_struct_key("vocative" <> _, :singular), do: :vocative_singular
   defp to_struct_key("vocative" <> _, :plural), do: :vocative_plural
 end

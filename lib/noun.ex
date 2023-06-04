@@ -2,7 +2,9 @@ defmodule Noun do
   @moduledoc """
   A struct representing a Russian noun.
   """
-  defstruct nominative_singular: nil,
+  defstruct translation: nil,
+            gender: nil,
+            nominative_singular: nil,
             genitive_singular: nil,
             dative_singular: nil,
             accusative_singular: nil,
@@ -14,6 +16,8 @@ defmodule Noun do
             accusative_plural: nil,
             instrumental_plural: nil,
             prepositional_plural: nil,
+            partitive_singular: nil,
+            partitive_plural: nil,
             vocative_singular: nil,
             vocative_plural: nil
 
@@ -22,6 +26,8 @@ defmodule Noun do
   
   ## Fields
   
+  - `:translation`: The English translation of the noun.
+  - `:translation`: The grammatical gender of the noun.
   - `:nominative_singular`: The nominative singular form of the noun.
   - `:genitive_singular`: The genitive singular form of the noun.
   - `:dative_singular`: The dative singular form of the noun.
@@ -34,10 +40,14 @@ defmodule Noun do
   - `:accusative_plural`: The accusative plural form of the noun.
   - `:instrumental_plural`: The instrumental plural form of the noun.
   - `:prepositional_plural`: The prepositional plural form of the noun.
+  - `:partitive_singular`: The partitive singular form of the noun.
+  - `:partitive_plural`: The partitive plural form of the noun.
   - `:vocative_singular`: The vocative singular form of the noun.
   - `:vocative_plural`: The vocative plural form of the noun.
   """
   @type t :: %__MODULE__{
+          translation: String.t(),
+          gender: String.t(),
           nominative_singular: String.t(),
           genitive_singular: String.t(),
           dative_singular: String.t(),
@@ -50,6 +60,8 @@ defmodule Noun do
           accusative_plural: String.t(),
           instrumental_plural: String.t(),
           prepositional_plural: String.t(),
+          partitive_singular: String.t(),
+          partitive_plural: String.t(),
           vocative_singular: String.t(),
           vocative_plural: String.t()
         }

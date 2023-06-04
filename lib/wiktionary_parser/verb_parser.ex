@@ -4,31 +4,27 @@ defmodule WiktionaryParser.VerbParser do
   import WiktionaryParser.Parser
   require Floki
 
-  @selectors %{
-    headers: "tr.rowgroup",
-    cells: "th, td"
-  }
-
   @behaviour WiktionaryParser
 
   @impl WiktionaryParser
   def parse(word) do
-    with {:ok, html} <- get_html(word),
-         {:ok, document} <- Floki.parse_document(html),
-         {:ok, table} <- extract_table(document),
+    with {:ok, entry} <- get_entry(word),
+         {:ok, translation} <- extract_translation(entry),
+         {:ok, table} <- extract_table(entry),
          {:ok, headers} <- extract_table_headers(table),
          {:ok, rows} <- extract_table_rows(table),
          {:ok, cells} <- extract_table_cells(rows),
          {:ok, table_sections} <- extract_table_sections(cells, headers),
-         struct <- build_struct(table_sections) do
+         struct <- build_struct(table_sections, translation) do
       {:ok, struct}
     else
       {:error, reason} -> {:error, reason}
     end
   end
 
-  defp build_struct(table_sections) do
+  defp build_struct(table_sections, translation) do
     %Verb{}
+    |> add_field(:translation, "to " <> translation)
     |> add_field(:infinitive, table_sections.infinitive)
     |> add_field(:aspect, table_sections.aspect |> String.split() |> Enum.at(0))
     |> add_present_future_tense(table_sections.present_future_tense)
@@ -64,16 +60,6 @@ defmodule WiktionaryParser.VerbParser do
 
       _ ->
         {:error, "unexpected HTML table structure"}
-    end
-  end
-
-  defp extract_table_headers(table) do
-    with row_group when row_group != [] <- Floki.find(table, @selectors.headers),
-         rows <- Stream.map(row_group, &Floki.find(&1, @selectors.cells)),
-         headers <- Enum.map(rows, fn cells -> Enum.map(cells, &Floki.text/1) end) do
-      {:ok, headers}
-    else
-      _ -> {:error, "table headers with selector '#{@selectors.headers}' not found"}
     end
   end
 

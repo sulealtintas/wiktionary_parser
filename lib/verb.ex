@@ -2,7 +2,8 @@ defmodule Verb do
   @moduledoc """
   A struct representing a Russian verb.
   """
-  defstruct infinitive: nil,
+  defstruct translation: nil,
+            infinitive: nil,
             aspect: nil,
             present_first_singular: nil,
             present_second_singular: nil,
@@ -34,6 +35,7 @@ defmodule Verb do
   
   ## Fields
   
+  - `:translation`: The English translation of the verb.
   - `:infinitive`: The infinitive form of the verb.
   - `:aspect`: The aspect of the verb.
   - `:present_first_singular`: The first-person singular form in the present tense.
@@ -62,6 +64,7 @@ defmodule Verb do
   - `:past_adverbial_participle`: The past adverbial participle form.
   """
   @type t :: %__MODULE__{
+          translation: String.t(),
           infinitive: String.t(),
           aspect: String.t(),
           present_first_singular: String.t(),

@@ -6,37 +6,46 @@ defmodule WiktionaryParser.Parser do
   @wiktionary_url "https://en.wiktionary.org/wiki/"
   @selectors %{
     translation: "ol li a",
+    gender: "span.gender abbr",
     table: ".NavContent",
-    language: ".lang-ru",
     headers: "tr.rowgroup",
     rows: "tr",
     cells: "th, td"
   }
 
-  def get_html(word) do
-    with {:ok, response} <- HTTPoison.get(@wiktionary_url <> word) do
-      {:ok, response.body}
+  @entry_pattern ~r|<h2><span class="mw-headline" id="Russian">Russian(.+)(</div>.?)+|s
+
+  def get_entry(word) do
+    with {:ok, response} <- HTTPoison.get(@wiktionary_url <> word),
+         [html_fragment | _] <- Regex.run(@entry_pattern, to_string(response.body)),
+         {:ok, entry} <- Floki.parse_fragment(html_fragment) do
+      {:ok, entry}
     else
       {:error, reason} -> {:error, reason}
+      _ -> {:error, "failed to retrieve entry for word #{word}"}
     end
   end
 
-  def extract_table(document) do
-    with frames when frames != [] <- Floki.find(document, @selectors.table),
-         frame when frame != [] <-
-           Enum.filter(frames, fn frame -> Floki.find(frame, @selectors.language) != [] end),
-         [table | _] <- Floki.find(frame, @selectors.table) do
-      {:ok, table}
+  def extract_table(entry) do
+    case Floki.find(entry, @selectors.table) do
+      [table | _] -> {:ok, table}
+      _ -> {:error, "failed to retrieve table with selector '#{@selectors.table}'"}
+    end
+  end
+
+  def extract_table_headers(table) do
+    with row_group when row_group != [] <- Floki.find(table, @selectors.headers),
+         rows <- Stream.map(row_group, &Floki.find(&1, @selectors.cells)),
+         headers <- Enum.map(rows, fn cells -> Enum.map(cells, &Floki.text/1) end) do
+      {:ok, headers}
     else
-      _ ->
-        {:error,
-         "table with selectors '#{@selectors.table}' and #{@selectors.language}' not found"}
+      _ -> {:error, "failed to retrieve table headers with selector '#{@selectors.headers}'"}
     end
   end
 
   def extract_table_rows(table) do
     case Floki.find(table, @selectors.rows) do
-      [] -> {:error, "table rows with selector '#{@selectors.rows}' not found"}
+      [] -> {:error, "failed to retrieve table rows with selector '#{@selectors.rows}'"}
       rows -> {:ok, rows}
     end
   end
@@ -47,7 +56,21 @@ defmodule WiktionaryParser.Parser do
     if Enum.all?(cell_rows, &(&1 != [])) do
       {:ok, Enum.map(cell_rows, fn cells -> Enum.map(cells, &Floki.text/1) end)}
     else
-      {:error, "table cells with selector '#{@selectors.cells}' not found"}
+      {:error, "failed to retrieve table cells with selector '#{@selectors.cells}'"}
+    end
+  end
+
+  def extract_translation(entry) do
+    case Floki.find(entry, @selectors.translation) do
+      [translation | _] -> {:ok, Floki.text(translation)}
+      _ -> {:error, "failed to retrieve translation with selector '#{@selectors.translation}'"}
+    end
+  end
+
+  def extract_gender(table) do
+    case Floki.find(table, @selectors.gender) do
+      [gender | _] -> {:ok, Floki.text(gender)}
+      _ -> {:error, "failed to retrieve gender with selector #{@selectors.gender}"}
     end
   end
 
@@ -63,5 +86,6 @@ defmodule WiktionaryParser.Parser do
     |> String.split("\n")
     |> Enum.at(0)
     |> String.replace("*", "")
+    |> String.downcase()
   end
 end
