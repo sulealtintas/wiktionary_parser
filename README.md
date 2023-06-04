@@ -1,6 +1,6 @@
 # WiktionaryParser
 
-Provides functions for parsing Russian language entries from Wiktionary.
+Provides functions for parsing Russian language entries from [Wiktionary](https://en.wiktionary.org).
 
 ## Features
 
