@@ -2,6 +2,8 @@
 
 Provides functions for parsing Russian language entries from [Wiktionary](https://en.wiktionary.org).
 
+ExDoc documentation is available on [GitHub pages](https://sulealtintas.github.io/wiktionary_parser).
+
 ## Features
 
 - Parse Russian verb entries from Wiktionary.
@@ -15,7 +17,7 @@ only supporting `:verb` and `:noun`):
 
 ```elixir
 iex> WiktionaryParser.parse!("смотреть", :verb)
-%Verb{
+%WiktionaryParser.Verb{
   translation: "to look",
   infinitive: "смотре́ть",
   aspect: "imperfective",
@@ -46,7 +48,7 @@ iex> WiktionaryParser.parse!("смотреть", :verb)
 }
 
 iex> WiktionaryParser.parse!("кот", :noun)
-%Noun{
+%WiktionaryParser.Noun{
   translation: "tomcat",
   gender: "m",
   nominative_singular: "ко́т",

@@ -1,11 +1,18 @@
 defmodule WiktionaryParser.NounParser do
-  @moduledoc false
+  @moduledoc """
+  Implements the WiktionaryParser behaviour to parse Wiktionary entries for Russian nouns.
+  """
 
-  alias WiktionaryParser.Noun
   import WiktionaryParser.Parser
-
+  alias WiktionaryParser.Noun
   @behaviour WiktionaryParser
 
+  @doc """
+  Parses the Wiktionary entry for a noun, given its nominative singular form.
+  
+  Returns `{:ok, noun}` if successful, `{:error, reason}` otherwise.
+  """
+  @spec parse(word :: String.t()) :: {:ok, Noun.t()} | {:error, String.t()}
   @impl WiktionaryParser
   def parse(word) do
     with {:ok, entry} <- get_entry(word),

@@ -1,11 +1,18 @@
 defmodule WiktionaryParser.VerbParser do
-  @moduledoc false
+  @moduledoc """
+  Implements the WiktionaryParser behaviour to parse Wiktionary entries for Russian verbs.
+  """
 
-  alias WiktionaryParser.Verb
   import WiktionaryParser.Parser
-
+  alias WiktionaryParser.Verb
   @behaviour WiktionaryParser
 
+  @doc """
+  Parses the Wiktionary entry for a verb, given its infintive form.
+  
+  Returns `{:ok, verb}` if successful, `{:error, reason}` otherwise.
+  """
+  @spec parse(word :: String.t()) :: {:ok, Verb.t()} | {:error, String.t()}
   @impl WiktionaryParser
   def parse(word) do
     with {:ok, entry} <- get_entry(word),

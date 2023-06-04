@@ -22,7 +22,8 @@ defmodule WiktionaryParser.MixProject do
   defp deps do
     [
       {:httpoison, "~> 2.0"},
-      {:floki, "~> 0.34.2"}
+      {:floki, "~> 0.34.2"},
+      {:ex_doc, "~> 0.29", only: :dev, runtime: false}
     ]
   end
 end
