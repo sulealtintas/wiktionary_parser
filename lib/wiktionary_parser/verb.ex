@@ -1,4 +1,4 @@
-defmodule Verb do
+defmodule WiktionaryParser.Verb do
   @moduledoc """
   A struct representing a Russian verb.
   """

@@ -1,6 +1,7 @@
 defmodule WiktionaryParser.VerbParser do
   @moduledoc false
 
+  alias WiktionaryParser.Verb
   import WiktionaryParser.Parser
   require Floki
 

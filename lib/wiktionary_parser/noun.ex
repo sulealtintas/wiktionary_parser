@@ -1,4 +1,4 @@
-defmodule Noun do
+defmodule WiktionaryParser.Noun do
   @moduledoc """
   A struct representing a Russian noun.
   """
