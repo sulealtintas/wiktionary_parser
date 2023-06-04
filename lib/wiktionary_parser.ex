@@ -1,10 +1,12 @@
 defmodule WiktionaryParser do
   @moduledoc """
   This module provides functions for parsing Russian Wiktionary entries.
-
+  
   Currently, only parsing of verbs and nouns is supported.
   """
 
+  alias WiktionaryParser.Verb
+  alias WiktionaryParser.Noun
   require Floki
   require HTTPoison
 
@@ -13,20 +15,20 @@ defmodule WiktionaryParser do
     noun: WiktionaryParser.NounParser
   }
 
-  @callback parse(String.t()) :: {:ok, Verb.t() | Noun.t()} | {:error, String.t()}
+  @callback parse(word :: String.t()) :: {:ok, Verb.t() | Noun.t()} | {:error, String.t()}
 
   @doc """
   Parses the given word as the appropriate struct.
   Returns {:ok, struct} if successful, {:error, reason} otherwise.
-
+  
   ## Examples
-
+  
       iex> WiktionaryParser.parse("смотреть", :verb)
-      {:ok, %Verb{infinitive: "смотре́ть", ...}}
-
+      {:ok, %Verb{translation: "to look", infinitive: "смотре́ть", ...}}
+  
       iex> WiktionaryParser.parse("кот", :noun)
-      {:ok, %Noun{nominative_singular: "ко́т", ...}}
-
+      {:ok, %Noun{translation: "tomcat", gender: "m", ...}}
+  
   """
   @spec parse(String.t(), :verb | :noun) :: {:ok, Verb.t() | Noun.t()} | {:error, String.t()}
   def parse(word, part_of_speech) do
@@ -36,15 +38,15 @@ defmodule WiktionaryParser do
   @doc """
   Parses the given word as the appropriate struct.
   Returns the parsed struct if successful, or raises an error otherwise.
-
+  
   ## Examples
-
+  
       iex> WiktionaryParser.parse!("смотреть", :verb)
-      %Verb{infinitive: "смотре́ть", ...}
-
+      %Verb{translation: "to look", infinitive: "смотре́ть", ...}
+  
       iex> WiktionaryParser.parse!("кот", :noun)
-      %Noun{nominative_singular: "ко́т", ...}
-
+      %Noun{translation: "tomcat", gender: "m", ...}
+  
   """
   @spec parse!(String.t(), :verb | :noun) :: Verb.t() | Noun.t()
   def parse!(word, part_of_speech) do

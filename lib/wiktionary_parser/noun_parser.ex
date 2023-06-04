@@ -3,7 +3,6 @@ defmodule WiktionaryParser.NounParser do
 
   alias WiktionaryParser.Noun
   import WiktionaryParser.Parser
-  require Floki
 
   @behaviour WiktionaryParser
 
