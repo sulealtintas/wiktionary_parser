@@ -47,7 +47,7 @@ defmodule WiktionaryParser.Noun do
   """
   @type t :: %__MODULE__{
           translation: String.t(),
-          gender: String.t(),
+          gender: :masculine | :feminine | :neuter,
           nominative_singular: String.t(),
           genitive_singular: String.t(),
           dative_singular: String.t(),

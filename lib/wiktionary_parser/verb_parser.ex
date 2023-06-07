@@ -30,14 +30,20 @@ defmodule WiktionaryParser.VerbParser do
   end
 
   defp build_struct(table_sections, translation) do
-    %Verb{}
-    |> add_field(:translation, "to " <> translation)
-    |> add_field(:infinitive, table_sections.infinitive)
-    |> add_field(:aspect, table_sections.aspect |> String.split() |> Enum.at(0))
-    |> add_present_future_tense(table_sections.present_future_tense)
-    |> add_past_tense(table_sections.past_tense)
-    |> add_imperative(table_sections.imperative)
-    |> add_participles(table_sections.participles)
+    case to_aspect(table_sections.aspect) do
+      {:ok, aspect} ->
+        %Verb{}
+        |> add_field(:translation, "to " <> translation)
+        |> add_field(:infinitive, table_sections.infinitive)
+        |> add_field(:aspect, aspect)
+        |> add_present_future_tense(table_sections.present_future_tense)
+        |> add_past_tense(table_sections.past_tense)
+        |> add_imperative(table_sections.imperative)
+        |> add_participles(table_sections.participles)
+
+      {:error, reason} ->
+        {:error, reason}
+    end
   end
 
   defp extract_table_sections(cells, table_headers) do
@@ -70,7 +76,7 @@ defmodule WiktionaryParser.VerbParser do
     end
   end
 
-  defp add_present_future_tense(%{aspect: "imperfective"} = struct, cells) do
+  defp add_present_future_tense(%{aspect: :imperfective} = struct, cells) do
     Enum.reduce(cells, struct, fn [row_name, present, future], acc ->
       acc
       |> add_field(to_struct_key(row_name, :present), present)
@@ -78,7 +84,7 @@ defmodule WiktionaryParser.VerbParser do
     end)
   end
 
-  defp add_present_future_tense(%{aspect: "perfective"} = struct, cells) do
+  defp add_present_future_tense(%{aspect: :perfective} = struct, cells) do
     Enum.reduce(cells, struct, fn [row_name, _present, future], acc ->
       add_field(acc, to_struct_key(row_name, :future), future)
     end)
@@ -131,4 +137,8 @@ defmodule WiktionaryParser.VerbParser do
   defp to_struct_key("1stplural" <> _, :future), do: :future_first_plural
   defp to_struct_key("2ndplural" <> _, :future), do: :future_second_plural
   defp to_struct_key("3rdplural" <> _, :future), do: :future_third_plural
+
+  defp to_aspect("imperfective" <> _), do: {:ok, :imperfective}
+  defp to_aspect("perfective" <> _), do: {:ok, :perfective}
+  defp to_aspect(text), do: {:error, "unrecognized aspect #{text}"}
 end

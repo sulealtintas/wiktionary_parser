@@ -20,7 +20,7 @@ iex> WiktionaryParser.parse!("смотреть", :verb)
 %WiktionaryParser.Verb{
   translation: "to look",
   infinitive: "смотре́ть",
-  aspect: "imperfective",
+  aspect: :imperfective,
   present_first_singular: "смотрю́",
   present_second_singular: "смо́тришь",
   present_third_singular: "смо́трит",
@@ -50,7 +50,7 @@ iex> WiktionaryParser.parse!("смотреть", :verb)
 iex> WiktionaryParser.parse!("кот", :noun)
 %WiktionaryParser.Noun{
   translation: "tomcat",
-  gender: "m",
+  gender: :masculine,
   nominative_singular: "ко́т",
   genitive_singular: "кота́",
   dative_singular: "коту́",
@@ -70,5 +70,7 @@ iex> WiktionaryParser.parse!("кот", :noun)
 }
 ```
 
-The `parse!/2` function returns a struct representing the parsed word with its associated forms, as shown above for [смотреть](https://en.wiktionary.org/wiki/смотреть#Russian) and [кот](https://en.wiktionary.org/wiki/кот#Russian).
+The `parse!/2` function returns a struct representing the parsed word with its associated forms,
+as shown above for [смотреть](https://en.wiktionary.org/wiki/смотреть#Russian) and
+[кот](https://en.wiktionary.org/wiki/кот#Russian).
 

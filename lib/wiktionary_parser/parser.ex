@@ -6,7 +6,6 @@ defmodule WiktionaryParser.Parser do
   @wiktionary_url "https://en.wiktionary.org/wiki/"
   @selectors %{
     translation: "ol li a",
-    gender: "span.gender abbr",
     table: ".NavContent",
     headers: "tr.rowgroup",
     rows: "tr",
@@ -67,15 +66,12 @@ defmodule WiktionaryParser.Parser do
     end
   end
 
-  def extract_gender(table) do
-    case Floki.find(table, @selectors.gender) do
-      [gender | _] -> {:ok, Floki.text(gender)}
-      _ -> {:error, "failed to retrieve gender with selector #{@selectors.gender}"}
-    end
+  def add_field(struct, key, value) when is_binary(value) do
+    Map.put(struct, key, clean_text(value))
   end
 
-  def add_field(struct, key, text) do
-    Map.put(struct, key, clean_text(text))
+  def add_field(struct, key, value) do
+    Map.put(struct, key, value)
   end
 
   def clean_text(""), do: nil

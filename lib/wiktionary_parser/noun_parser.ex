@@ -7,6 +7,10 @@ defmodule WiktionaryParser.NounParser do
   alias WiktionaryParser.Noun
   @behaviour WiktionaryParser
 
+  @selectors %{
+    gender: "span.gender abbr"
+  }
+
   @doc """
   Parses the Wiktionary entry for a noun, given its nominative singular form.
   
@@ -43,6 +47,15 @@ defmodule WiktionaryParser.NounParser do
     end)
   end
 
+  def extract_gender(entry) do
+    with [gender_html | _] <- Floki.find(entry, @selectors.gender),
+         gender_string <- Floki.text(gender_html) do
+      to_gender(gender_string)
+    else
+      _ -> {:error, "failed to retrieve gender with selector #{@selectors.gender}"}
+    end
+  end
+
   defp to_struct_key("nominative" <> _, :singular), do: :nominative_singular
   defp to_struct_key("genitive" <> _, :singular), do: :genitive_singular
   defp to_struct_key("dative" <> _, :singular), do: :dative_singular
@@ -59,4 +72,9 @@ defmodule WiktionaryParser.NounParser do
   defp to_struct_key("partitive" <> _, :plural), do: :partitive_plural
   defp to_struct_key("vocative" <> _, :singular), do: :vocative_singular
   defp to_struct_key("vocative" <> _, :plural), do: :vocative_plural
+
+  defp to_gender("m" <> _), do: {:ok, :masculine}
+  defp to_gender("f" <> _), do: {:ok, :feminine}
+  defp to_gender("n" <> _), do: {:ok, :neuter}
+  defp to_gender(text), do: {:error, "unrecognized gender #{text}"}
 end
