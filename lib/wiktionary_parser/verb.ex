@@ -66,7 +66,7 @@ defmodule WiktionaryParser.Verb do
   @type t :: %__MODULE__{
           translation: String.t(),
           infinitive: String.t(),
-          aspect: String.t(),
+          aspect: :imperfective | :perfective,
           present_first_singular: String.t(),
           present_second_singular: String.t(),
           present_third_singular: String.t(),

@@ -37,7 +37,7 @@ defmodule WiktionaryParser do
       {:ok, %WiktionaryParser.Verb{translation: "to look", infinitive: "смотре́ть", ...}}
   
       iex> WiktionaryParser.parse("кот", :noun)
-      {:ok, %WiktionaryParser.Noun{translation: "tomcat", gender: "m", ...}}
+      {:ok, %WiktionaryParser.Noun{translation: "tomcat", gender: :male, ...}}
   
   """
   @spec parse(word :: String.t(), part_of_speech :: :verb | :noun) ::
