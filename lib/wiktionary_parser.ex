@@ -43,7 +43,10 @@ defmodule WiktionaryParser do
   @spec parse(word :: String.t(), part_of_speech :: :verb | :noun) ::
           {:ok, Verb.t() | Noun.t()} | {:error, String.t()}
   def parse(word, part_of_speech) do
-    @parsers[part_of_speech].parse(word)
+    case @parsers[part_of_speech] do
+      nil -> {:error, "unrecognized part of speech :#{part_of_speech}"}
+      parser -> parser.parse(word)
+    end
   end
 
   @doc """

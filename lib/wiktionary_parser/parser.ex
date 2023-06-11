@@ -20,7 +20,6 @@ defmodule WiktionaryParser.Parser do
          {:ok, entry} <- Floki.parse_fragment(html_fragment) do
       {:ok, entry}
     else
-      {:error, reason} -> {:error, reason}
       _ -> {:error, "failed to retrieve entry for word #{word}"}
     end
   end
@@ -82,6 +81,5 @@ defmodule WiktionaryParser.Parser do
     |> String.split("\n")
     |> Enum.at(0)
     |> String.replace("*", "")
-    |> String.downcase()
   end
 end

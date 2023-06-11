@@ -40,10 +40,14 @@ defmodule WiktionaryParser.NounParser do
   end
 
   defp add_declensions(struct, [_ | cells]) do
-    Enum.reduce(cells, struct, fn [row_name, singular, plural], acc ->
-      acc
-      |> add_field(to_struct_key(row_name, :singular), singular)
-      |> add_field(to_struct_key(row_name, :plural), plural)
+    Enum.reduce(cells, struct, fn
+      [row_name, singular], acc ->
+        add_field(acc, to_struct_key(row_name, :singular), singular)
+
+      [row_name, singular, plural], acc ->
+        acc
+        |> add_field(to_struct_key(row_name, :singular), singular)
+        |> add_field(to_struct_key(row_name, :plural), plural)
     end)
   end
 
