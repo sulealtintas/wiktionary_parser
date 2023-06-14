@@ -80,6 +80,6 @@ defmodule WiktionaryParser.Parser do
     text
     |> String.split("\n")
     |> Enum.at(0)
-    |> String.replace("*", "")
+    |> String.replace(~r/[^[:alpha:]|\s]/u, "")
   end
 end
